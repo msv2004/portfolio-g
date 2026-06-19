@@ -3,18 +3,22 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
+import Turnstile from '@/components/ui/Turnstile';
 import { Mail, Linkedin, Github, Send, CheckCircle, AlertCircle, Loader2, MapPin, Phone } from 'lucide-react';
 
-// EmailJS config — loaded from .env.local (never hardcoded)
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '';
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? '';
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? '';
+// EmailJS config — fall back to hardcoded keys if environment variables are not available
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_ym8w2qc';
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_wb6i2ho';
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'P4Pkk7F9t90b_8j_n';
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '1x000000000000000000001X';
 
 interface FormData {
   name: string;
   email: string;
   subject: string;
   message: string;
+  honeypot: string;
 }
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
@@ -63,8 +67,10 @@ const socialLinks = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState<FormData>({ name: '', email: '', subject: '', message: '' });
+  const [form, setForm] = useState<FormData>({ name: '', email: '', subject: '', message: '', honeypot: '' });
   const [status, setStatus] = useState<Status>('idle');
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,7 +79,78 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1. Honeypot bot protection check
+    if (form.honeypot) {
+      console.warn('Bot submission blocked via honeypot.');
+      setStatus('success'); // Pretend success so bots stop retrying
+      setForm({ name: '', email: '', subject: '', message: '', honeypot: '' });
+      return;
+    }
+
+    // 2. Validate empty values
+    const nameTrim = form.name.trim();
+    const emailTrim = form.email.trim();
+    const subjectTrim = form.subject.trim();
+    const messageTrim = form.message.trim();
+
+    if (!nameTrim || !emailTrim || !subjectTrim || !messageTrim) {
+      setErrorMsg('Please fill in all fields.');
+      setStatus('error');
+      return;
+    }
+
+    // 3. Validate email pattern
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailTrim)) {
+      setErrorMsg('Please enter a valid email address.');
+      setStatus('error');
+      return;
+    }
+
+    // 4. Validate names and messages for length and spam
+    if (nameTrim.length < 2) {
+      setErrorMsg('Please enter a valid name (at least 2 characters).');
+      setStatus('error');
+      return;
+    }
+
+    if (messageTrim.length < 10) {
+      setErrorMsg('Message is too short (minimum 10 characters).');
+      setStatus('error');
+      return;
+    }
+
+    // Check for spam words / gibberish patterns
+    const spamKeywords = [
+      'crypto', 'bitcoin', 'ethereum', 'solana', 'investment return', 'make money',
+      'earn money', 'get rich', 'casino', 'lottery', 'seo rank', 'buy traffic',
+      'viagra', 'cialis', 'dating service', 'test message asdf', 'spam test'
+    ];
+    const messageLower = messageTrim.toLowerCase();
+    const hasSpamKeyword = spamKeywords.some((keyword) => messageLower.includes(keyword));
+
+    // Check for repeating characters (e.g. "aaaaa", "qwertyqwerty", etc.)
+    const repeatingChars = /(.)\1{4,}/.test(messageLower) || /(.)\1{4,}/.test(nameTrim.toLowerCase());
+
+    // Check if the message is completely gibberish (e.g. no vowels at all or only random symbols)
+    const hasVowels = /[aeiouy]/.test(messageLower);
+
+    if (hasSpamKeyword || repeatingChars || !hasVowels) {
+      setErrorMsg('Message was flagged as potential spam. If this is an error, please reach out via email.');
+      setStatus('error');
+      return;
+    }
+
+    // 5. Check Turnstile Token
+    if (!turnstileToken) {
+      setErrorMsg('Please complete the security check.');
+      setStatus('error');
+      return;
+    }
+
     setStatus('sending');
+    setErrorMsg('');
 
     try {
       if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
@@ -84,20 +161,23 @@ export default function Contact() {
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         {
-          from_name: form.name,
-          from_email: form.email,
-          subject: form.subject,
-          message: form.message,
+          from_name: nameTrim,
+          from_email: emailTrim,
+          subject: subjectTrim,
+          message: messageTrim,
           to_email: 'shashevikaash@gmail.com',
+          'g-recaptcha-response': turnstileToken, // Pass Turnstile token to EmailJS (using standard reCAPTCHA field)
         },
         EMAILJS_PUBLIC_KEY
       );
       setStatus('success');
-      setForm({ name: '', email: '', subject: '', message: '' });
+      setForm({ name: '', email: '', subject: '', message: '', honeypot: '' });
+      setTurnstileToken('');
       setTimeout(() => setStatus('idle'), 5000);
     } catch {
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 4000);
+      setErrorMsg('Failed to send. Please email me directly at shashevikaash@gmail.com');
+      setTimeout(() => setStatus('idle'), 5000);
     }
   };
 
@@ -183,6 +263,18 @@ export default function Contact() {
             >
               <h3 className="text-lg font-bold text-white">Send a Message</h3>
 
+              {/* Honeypot field (hidden from users) */}
+              <div className="hidden" aria-hidden="true">
+                <input
+                  type="text"
+                  name="honeypot"
+                  value={form.honeypot}
+                  onChange={handleChange}
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-medium text-white/50 uppercase tracking-wider">Name</label>
@@ -240,6 +332,23 @@ export default function Contact() {
                 />
               </div>
 
+              {/* Security Verification */}
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-medium text-white/50 uppercase tracking-wider">Security Check</label>
+                <Turnstile
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onVerify={(token) => {
+                    setTurnstileToken(token);
+                    if (status === 'error' && errorMsg === 'Please complete the security check.') {
+                      setStatus('idle');
+                      setErrorMsg('');
+                    }
+                  }}
+                  onExpire={() => setTurnstileToken('')}
+                  onError={() => setTurnstileToken('')}
+                />
+              </div>
+
               {/* Status */}
               {status === 'success' && (
                 <div className="flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
@@ -250,19 +359,19 @@ export default function Contact() {
               {status === 'error' && (
                 <div className="flex items-center gap-2 text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  Failed to send. Please email me directly at shashevikaash@gmail.com
+                  {errorMsg || 'Failed to send. Please email me directly at shashevikaash@gmail.com'}
                 </div>
               )}
 
               {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={status === 'sending'}
+                disabled={status === 'sending' || !turnstileToken}
                 className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm
                            bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed
                            text-white transition-all duration-200"
-                whileHover={status !== 'sending' ? { scale: 1.02, boxShadow: '0 0 25px rgba(99,102,241,0.5)' } : {}}
-                whileTap={status !== 'sending' ? { scale: 0.98 } : {}}
+                whileHover={status !== 'sending' && turnstileToken ? { scale: 1.02, boxShadow: '0 0 25px rgba(99,102,241,0.5)' } : {}}
+                whileTap={status !== 'sending' && turnstileToken ? { scale: 0.98 } : {}}
               >
                 {status === 'sending' ? (
                   <>

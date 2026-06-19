@@ -10,7 +10,7 @@ const awards = [
     subtitle: 'Student Leadership Award',
     year: '2023',
     org: 'Saveetha School of Engineering',
-    description: 'Recognized for excellence in organizing the technical symposium, coordinating 500+ participants, and delivering a seamless academic event experience.',
+    description: 'Recognized for excellence in organizing the technical symposium, coordinating 15+ participants, and delivering a seamless academic event experience.',
     icon: '🏆',
     color: 'gold',
   },
@@ -184,7 +184,7 @@ export default function Awards() {
           {[
             { value: '90%', label: 'Pipeline Speedup', color: 'text-cyan-400' },
             { value: '90%+', label: 'CNN Accuracy', color: 'text-indigo-400' },
-            { value: '500+', label: 'Event Participants', color: 'text-amber-400' },
+            { value: '15+', label: 'Event Participants', color: 'text-amber-400' },
             { value: '8.93', label: 'CGPA', color: 'text-emerald-400' },
           ].map(({ value, label, color }) => (
             <div key={label} className="glass rounded-2xl p-5 border border-white/5 text-center">

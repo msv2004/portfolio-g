@@ -60,8 +60,7 @@ const socialLinks = [
 ];
 
 const stats = [
-  { value: '8.93', label: 'CGPA', unit: '/10' },
-  { value: '5+', label: 'Projects' },
+  { value: '15+', label: 'Projects' },
   { value: '2', label: 'Internships' },
   { value: '7+', label: 'Certifications' },
 ];
@@ -137,7 +136,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-white/50 text-sm sm:text-base leading-relaxed max-w-md mx-auto lg:mx-0"
             >
-              Final-year B.E. CSE student at Saveetha School of Engineering (CGPA 8.93) with
+              Final-year B.E. CSE student at Saveetha School of Engineering with
               expertise in AI/ML, cloud computing, and software development. Building intelligent
               systems that solve real-world problems.
             </motion.p>
@@ -203,11 +202,10 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.8 }}
               className="grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:gap-6 pt-2 w-full"
             >
-              {stats.map(({ value, label, unit }) => (
+              {stats.map(({ value, label }) => (
                 <div key={label} className="flex flex-col items-center lg:items-start">
                   <span className="text-xl sm:text-2xl font-bold text-white">
                     {value}
-                    {unit && <span className="text-xs sm:text-sm text-white/40 ml-0.5">{unit}</span>}
                   </span>
                   <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-wider">{label}</span>
                 </div>
@@ -255,14 +253,7 @@ export default function Hero() {
               <p className="text-lg font-bold text-white">90% faster</p>
             </motion.div>
 
-            <motion.div
-              className="absolute top-36 -right-2 glass border border-white/10 px-3 py-2 rounded-xl"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 0.5 }}
-            >
-              <p className="text-xs font-mono text-purple-400">CGPA</p>
-              <p className="text-lg font-bold text-white">8.93</p>
-            </motion.div>
+
           </motion.div>
         </div>
 

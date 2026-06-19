@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
+import { useEffect, useRef } from 'react';
 
 interface TurnstileProps {
   siteKey: string;
@@ -31,15 +30,15 @@ declare global {
 
 export default function Turnstile({ siteKey, onVerify, onExpire, onError }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!loaded || !containerRef.current) return;
-
     let widgetId: string | null = null;
+    let active = true;
 
-    if (window.turnstile) {
+    const renderWidget = () => {
+      if (!active || !containerRef.current || !window.turnstile) return;
       try {
+        containerRef.current.innerHTML = '';
         widgetId = window.turnstile.render(containerRef.current, {
           sitekey: siteKey,
           callback: onVerify,
@@ -50,26 +49,39 @@ export default function Turnstile({ siteKey, onVerify, onExpire, onError }: Turn
       } catch (e) {
         console.error('Turnstile render error:', e);
       }
+    };
+
+    if (window.turnstile) {
+      renderWidget();
+    } else {
+      const scriptId = 'cf-turnstile-script';
+      let script = document.getElementById(scriptId) as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement('script');
+        script.id = scriptId;
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+      }
+      script.addEventListener('load', renderWidget);
     }
 
     return () => {
+      active = false;
       if (widgetId && window.turnstile) {
         try {
           window.turnstile.remove(widgetId);
-        } catch (e) {
-          console.error('Turnstile remove error:', e);
+        } catch {
+          // ignore
         }
       }
+      const script = document.getElementById('cf-turnstile-script');
+      if (script) {
+        script.removeEventListener('load', renderWidget);
+      }
     };
-  }, [loaded, siteKey, onVerify, onExpire, onError]);
+  }, [siteKey, onVerify, onExpire, onError]);
 
-  return (
-    <>
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        onLoad={() => setLoaded(true)}
-      />
-      <div ref={containerRef} className="my-2 min-h-[65px] flex justify-start items-center" />
-    </>
-  );
+  return <div ref={containerRef} className="my-2 min-h-[65px] flex justify-start items-center" />;
 }

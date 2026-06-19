@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Syne } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -12,6 +12,13 @@ const jetbrains = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains',
   display: 'swap',
+});
+
+const syne = Syne({
+  subsets: ['latin'],
+  variable: '--font-syne',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -42,10 +49,7 @@ export const metadata: Metadata = {
     title: 'Marri Shashe Vikaash | AI Engineer & Software Developer',
     description: 'Premium 3D portfolio showcasing AI, ML, and software engineering projects.',
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -54,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable} ${syne.variable}`}>
       <body className="bg-[#050508] text-white antialiased">
         {children}
       </body>

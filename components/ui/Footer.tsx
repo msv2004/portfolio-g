@@ -1,40 +1,153 @@
 'use client';
 
-import { Github, Linkedin, Mail, Heart } from 'lucide-react';
+import { motion } from 'framer-motion';
+import MagneticButton from '@/components/ui/MagneticButton';
+import { Github, Linkedin, Mail, Heart, ArrowUp } from 'lucide-react';
+
+const navLinks = [
+  { href: '#about', label: 'About' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#experience', label: 'Experience' },
+  { href: '#projects', label: 'Projects' },
+  { href: '#research', label: 'Research' },
+  { href: '#awards', label: 'Awards' },
+  { href: '#certifications', label: 'Certifications' },
+  { href: '#contact', label: 'Contact' },
+];
+
+const socials = [
+  { icon: Github,   href: 'https://github.com/msv2004',              label: 'GitHub' },
+  { icon: Linkedin, href: 'https://linkedin.com/in/shashe-vikaash', label: 'LinkedIn' },
+  { icon: Mail,     href: 'mailto:shashevikaash@gmail.com',          label: 'Email' },
+];
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/5 py-10 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="font-mono text-sm">
-          <span className="gradient-text font-bold">MSV</span>
-          <span className="text-white/30 ml-1">Portfolio · 2025</span>
+    <footer className="relative border-t border-white/5">
+      {/* Top gradient separator */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+
+      {/* Ambient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[200px] bg-indigo-600/5 blur-[80px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 pt-14 pb-8 relative">
+        {/* Top row */}
+        <div className="grid md:grid-cols-3 gap-10 mb-12">
+          {/* Brand */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="font-mono text-xl font-bold mb-3">
+              <span className="gradient-text" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>MSV</span>
+              <span className="text-white/30 ml-1 text-sm">_.dev</span>
+            </div>
+            <p className="text-white/40 text-sm leading-relaxed max-w-xs">
+              AI Engineer & Software Developer. Building intelligent systems that solve real-world problems.
+            </p>
+            <div className="flex items-center gap-2 mt-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              <span className="text-xs text-emerald-400 font-medium">Available for opportunities</span>
+            </div>
+          </motion.div>
+
+          {/* Nav links */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Navigation</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-white/50 hover:text-indigo-400 transition-colors duration-200 gradient-underline w-fit"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Tech stack */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-widest mb-4">Built With</p>
+            <div className="flex flex-wrap gap-2">
+              {['Next.js 15', 'React 19', 'TypeScript', 'Three.js', 'Framer Motion', 'TailwindCSS'].map((tech) => (
+                <span
+                  key={tech}
+                  className="px-2.5 py-1 rounded-lg glass border border-white/8 text-xs text-white/50"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </motion.div>
         </div>
 
-        <div className="flex items-center gap-1 text-xs text-white/30">
-          Built with
-          <Heart className="w-3 h-3 mx-1 text-rose-500 fill-rose-500" />
-          using Next.js, Three.js & Framer Motion
-        </div>
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent mb-8" />
 
-        <div className="flex items-center gap-3">
-          {[
-            { icon: Github, href: 'https://github.com/msv2004', label: 'GitHub' },
-            { href: 'https://linkedin.com/in/shashe-vikaash', icon: Linkedin, label: 'LinkedIn' },
-            { href: 'mailto:shashevikaash@gmail.com', icon: Mail, label: 'Email' },
-          ].map(({ icon: Icon, href, label }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="p-2 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/5 transition-all"
+        {/* Bottom row */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-1.5 text-xs text-white/30">
+            <span>© 2025 Marri Shashe Vikaash · Made with</span>
+            <motion.div
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Icon className="w-4 h-4" />
-            </a>
-          ))}
-        </div>
+              <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
+            </motion.div>
+            <span>in Chennai</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {socials.map(({ icon: Icon, href, label }) => (
+              <MagneticButton
+                key={label}
+                href={href}
+                as="a"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                strength={0.4}
+                className="p-2.5 rounded-lg glass border border-white/5 text-white/40 hover:text-white/90 hover:border-indigo-500/20 transition-all duration-200"
+              >
+                <Icon className="w-4 h-4" />
+              </MagneticButton>
+            ))}
+
+            {/* Back to top */}
+            <MagneticButton
+              href="#"
+              as="a"
+              aria-label="Back to top"
+              strength={0.4}
+              className="p-2.5 rounded-lg glass border border-white/5 text-white/40 hover:text-indigo-400 hover:border-indigo-500/20 transition-all duration-200"
+            >
+              <ArrowUp className="w-4 h-4" />
+            </MagneticButton>
+          </div>
+        </motion.div>
       </div>
     </footer>
   );

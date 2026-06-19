@@ -2,6 +2,9 @@
 
 import { motion } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
+import SpotlightCard from '@/components/ui/SpotlightCard';
+import GlowBorder from '@/components/ui/GlowBorder';
+import AnimatedCounter from '@/components/ui/AnimatedCounter';
 
 const awards = [
   {
@@ -67,57 +70,70 @@ const awards = [
 ];
 
 const colorConfig: Record<string, {
-  bg: string; border: string; glow: string; badge: string; shimmer: string;
+  bg: string; border: string; glow: string; badge: string; shimmer: string; spotlight: string;
 }> = {
   gold: {
     bg: 'bg-gradient-to-br from-amber-500/10 to-yellow-500/5',
     border: 'border-amber-500/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(245,158,11,0.2)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(245,158,11,0.25)]',
     badge: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
     shimmer: 'from-amber-500/20 via-yellow-400/30 to-amber-500/20',
+    spotlight: 'rgba(245,158,11,0.15)',
   },
   silver: {
     bg: 'bg-gradient-to-br from-slate-400/10 to-gray-400/5',
     border: 'border-slate-400/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(148,163,184,0.15)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(148,163,184,0.2)]',
     badge: 'bg-slate-400/20 text-slate-300 border-slate-400/30',
     shimmer: 'from-slate-400/20 via-gray-300/30 to-slate-400/20',
+    spotlight: 'rgba(148,163,184,0.12)',
   },
   cyan: {
     bg: 'bg-gradient-to-br from-cyan-500/10 to-teal-500/5',
     border: 'border-cyan-500/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(34,211,238,0.2)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(34,211,238,0.25)]',
     badge: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
     shimmer: 'from-cyan-500/20 via-teal-400/30 to-cyan-500/20',
+    spotlight: 'rgba(34,211,238,0.12)',
   },
   purple: {
     bg: 'bg-gradient-to-br from-purple-500/10 to-violet-500/5',
     border: 'border-purple-500/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(168,85,247,0.2)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(168,85,247,0.25)]',
     badge: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
     shimmer: 'from-purple-500/20 via-violet-400/30 to-purple-500/20',
+    spotlight: 'rgba(139,92,246,0.12)',
   },
   emerald: {
     bg: 'bg-gradient-to-br from-emerald-500/10 to-green-500/5',
     border: 'border-emerald-500/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(16,185,129,0.2)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(16,185,129,0.25)]',
     badge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
     shimmer: 'from-emerald-500/20 via-green-400/30 to-emerald-500/20',
+    spotlight: 'rgba(16,185,129,0.1)',
   },
   rose: {
     bg: 'bg-gradient-to-br from-rose-500/10 to-pink-500/5',
     border: 'border-rose-500/30',
-    glow: 'hover:shadow-[0_0_40px_rgba(244,63,94,0.2)]',
+    glow: 'hover:shadow-[0_0_40px_rgba(244,63,94,0.25)]',
     badge: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
     shimmer: 'from-rose-500/20 via-pink-400/30 to-rose-500/20',
+    spotlight: 'rgba(244,63,94,0.1)',
   },
 };
+
+const statsData = [
+  { target: 90, suffix: '%', label: 'Pipeline Speedup', color: 'text-cyan-400', decimals: 0 },
+  { target: 90, suffix: '%+', label: 'CNN Accuracy', color: 'text-indigo-400', decimals: 0 },
+  { target: 15, suffix: '+', label: 'Event Participants', color: 'text-amber-400', decimals: 0 },
+  { target: 8.93, suffix: '', label: 'CGPA', color: 'text-emerald-400', decimals: 2 },
+];
 
 export default function Awards() {
   return (
     <section id="awards" className="section relative">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/3 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/4 rounded-full blur-[100px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
@@ -131,31 +147,27 @@ export default function Awards() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {awards.map((award, i) => {
             const c = colorConfig[award.color];
-            return (
-              <motion.div
-                key={award.id}
-                initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className={`relative rounded-2xl border ${c.border} ${c.bg} ${c.glow} p-6 transition-all duration-300 overflow-hidden group`}
+            const isGold = award.color === 'gold';
+
+            const cardContent = (
+              <SpotlightCard
+                className={`relative rounded-2xl border ${c.border} ${c.bg} ${c.glow} p-6 transition-all duration-300 overflow-hidden group h-full`}
+                spotlightColor={c.spotlight}
               >
                 {/* Shimmer overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-r ${c.shimmer} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
 
-                {/* Trophy icon */}
                 <div className="relative">
                   <motion.div
                     className="text-4xl mb-4 inline-block"
-                    animate={{ rotate: [0, -5, 5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                    whileHover={{ rotate: [-5, 5, -5, 0], scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
                   >
                     {award.icon}
                   </motion.div>
 
                   <div className="mb-3">
-                    <h3 className="text-base font-bold text-white mb-1">{award.title}</h3>
+                    <h3 className="text-base font-bold text-white mb-1" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>{award.title}</h3>
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${c.badge}`}>
                       {award.subtitle}
                     </span>
@@ -168,12 +180,35 @@ export default function Awards() {
                     <span className="text-xs font-mono text-white/30">{award.year}</span>
                   </div>
                 </div>
+              </SpotlightCard>
+            );
+
+            return (
+              <motion.div
+                key={award.id}
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.09 }}
+                whileHover={{ y: -6 }}
+              >
+                {isGold ? (
+                  <GlowBorder
+                    borderRadius="1rem"
+                    glowColors={['#f59e0b', '#fbbf24', '#fcd34d', '#f59e0b']}
+                    active
+                  >
+                    {cardContent}
+                  </GlowBorder>
+                ) : (
+                  cardContent
+                )}
               </motion.div>
             );
           })}
         </div>
 
-        {/* Stats row */}
+        {/* Stats row with AnimatedCounter */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -181,16 +216,17 @@ export default function Awards() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          {[
-            { value: '90%', label: 'Pipeline Speedup', color: 'text-cyan-400' },
-            { value: '90%+', label: 'CNN Accuracy', color: 'text-indigo-400' },
-            { value: '15+', label: 'Event Participants', color: 'text-amber-400' },
-            { value: '8.93', label: 'CGPA', color: 'text-emerald-400' },
-          ].map(({ value, label, color }) => (
-            <div key={label} className="glass rounded-2xl p-5 border border-white/5 text-center">
-              <p className={`text-3xl font-bold ${color} mb-1`}>{value}</p>
+          {statsData.map(({ target, suffix, label, color, decimals }) => (
+            <SpotlightCard
+              key={label}
+              className="glass-card rounded-2xl p-5 border border-white/5 text-center"
+              spotlightColor="rgba(99,102,241,0.08)"
+            >
+              <p className={`text-3xl font-bold ${color} mb-1`} style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>
+                <AnimatedCounter target={target} suffix={suffix} decimals={decimals} />
+              </p>
               <p className="text-xs text-white/40 uppercase tracking-wider">{label}</p>
-            </div>
+            </SpotlightCard>
           ))}
         </motion.div>
       </div>

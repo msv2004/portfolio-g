@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import dynamic from 'next/dynamic';
-import { ArrowDown, Github, Linkedin, Mail, Sparkles, ChevronRight } from 'lucide-react';
+import { ArrowDown, Github, Linkedin, Mail, ChevronRight, ExternalLink } from 'lucide-react';
 import NeuralNetworkBg from '@/components/three/NeuralNetworkBg';
 import ThreeErrorBoundary from '@/components/three/ThreeErrorBoundary';
+import MagneticButton from '@/components/ui/MagneticButton';
+import AnimatedCounter from '@/components/ui/AnimatedCounter';
+
 
 const RotatingSphere = dynamic(() => import('@/components/three/RotatingSphere'), {
   ssr: false,
@@ -33,11 +36,11 @@ function TypewriterTitle() {
   useEffect(() => {
     const current = TITLES[titleIdx];
     if (!deleting && displayed.length < current.length) {
-      timeout.current = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 80);
+      timeout.current = setTimeout(() => setDisplayed(current.slice(0, displayed.length + 1)), 75);
     } else if (!deleting && displayed.length === current.length) {
-      timeout.current = setTimeout(() => setDeleting(true), 2000);
+      timeout.current = setTimeout(() => setDeleting(true), 2200);
     } else if (deleting && displayed.length > 0) {
-      timeout.current = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 40);
+      timeout.current = setTimeout(() => setDisplayed(displayed.slice(0, -1)), 35);
     } else if (deleting && displayed.length === 0) {
       setDeleting(false);
       setTitleIdx((i) => (i + 1) % TITLES.length);
@@ -48,38 +51,54 @@ function TypewriterTitle() {
   return (
     <span className="gradient-text font-mono">
       {displayed}
-      <span className="cursor-blink text-indigo-400">|</span>
+      <span className="cursor-blink text-indigo-400 ml-0.5">|</span>
     </span>
   );
 }
 
 const socialLinks = [
-  { icon: Github, href: 'https://github.com/msv2004', label: 'GitHub' },
-  { icon: Linkedin, href: 'https://linkedin.com/in/shashe-vikaash', label: 'LinkedIn' },
-  { icon: Mail, href: 'mailto:shashevikaash@gmail.com', label: 'Email' },
+  { icon: Github, href: 'https://github.com/msv2004', label: 'GitHub', color: 'hover:text-white hover:border-white/30' },
+  { icon: Linkedin, href: 'https://linkedin.com/in/shashe-vikaash', label: 'LinkedIn', color: 'hover:text-blue-400 hover:border-blue-500/30' },
+  { icon: Mail, href: 'mailto:shashevikaash@gmail.com', label: 'Email', color: 'hover:text-rose-400 hover:border-rose-500/30' },
 ];
 
 const stats = [
-  { value: '15+', label: 'Projects' },
-  { value: '2', label: 'Internships' },
-  { value: '7+', label: 'Certifications' },
+  { value: 15, suffix: '+', label: 'Projects', decimals: 0 },
+  { value: 2, suffix: '', label: 'Internships', decimals: 0 },
+  { value: 7, suffix: '+', label: 'Certifications', decimals: 0 },
+  { value: 8.93, suffix: '', label: 'CGPA', decimals: 2 },
 ];
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 32, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+};
+
 export default function Hero() {
+  const { scrollYProgress } = useScroll();
+  const yParallax = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
+  const opacityParallax = useTransform(scrollYProgress, [0, 0.35], [1, 0]);
+  const springY = useSpring(yParallax, { stiffness: 80, damping: 20 });
+
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
-    >
+    <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Neural network canvas */}
       <NeuralNetworkBg />
 
       {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/60 via-transparent to-[#050508]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050508]/70 via-transparent to-[#050508]" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#050508]/80 via-transparent to-transparent" />
 
-      {/* Mobile: 3D sphere as background element */}
-      <div className="absolute inset-0 lg:hidden flex items-center justify-center opacity-25 pointer-events-none">
+      {/* Aurora accent */}
+      <div className="absolute inset-0 aurora-bg pointer-events-none opacity-60" />
+
+      {/* Mobile: 3D sphere as background */}
+      <div className="absolute inset-0 lg:hidden flex items-center justify-center opacity-20 pointer-events-none">
         <div className="w-[340px] h-[340px] relative">
           <ThreeErrorBoundary>
             <RotatingSphere />
@@ -87,43 +106,46 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 w-full">
+      <motion.div
+        style={{ y: springY, opacity: opacityParallax }}
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16 w-full"
+      >
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[85vh]">
 
           {/* Left: Text Content */}
-          <div className="flex flex-col gap-5 sm:gap-6 text-center lg:text-left items-center lg:items-start">
-
+          <motion.div
+            className="flex flex-col gap-5 sm:gap-6 text-center lg:text-left items-center lg:items-start"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-widest uppercase glass border border-indigo-500/20 text-indigo-400">
-                <Sparkles className="w-3 h-3" />
+            <motion.div variants={itemVariants}>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-widest uppercase glass border border-indigo-500/25 text-indigo-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
                 Available for Opportunities
               </span>
             </motion.div>
 
             {/* Name */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-            >
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                <span className="text-white/90">Marri</span>
+            <motion.div variants={itemVariants}>
+              <h1
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight"
+                style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}
+              >
+                <span className="text-white/85">Marri</span>
                 <br />
-                <span className="text-white">Shashe</span>
-                <span className="gradient-text ml-2 sm:ml-3">Vikaash</span>
+                <span className="text-white">Shashe </span>
+                <span className="gradient-text">Vikaash</span>
               </h1>
             </motion.div>
 
             {/* Typewriter */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              variants={itemVariants}
               className="text-lg sm:text-xl md:text-2xl font-medium text-white/60 h-8"
             >
               <TypewriterTitle />
@@ -131,9 +153,7 @@ export default function Hero() {
 
             {/* Description */}
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+              variants={itemVariants}
               className="text-white/50 text-sm sm:text-base leading-relaxed max-w-md mx-auto lg:mx-0"
             >
               Final-year B.E. CSE student at Saveetha School of Engineering with
@@ -143,91 +163,106 @@ export default function Hero() {
 
             {/* CTA Buttons */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              variants={itemVariants}
               className="flex flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start w-full"
             >
-              <motion.a
+              <MagneticButton
                 href="#projects"
-                className="flex items-center gap-2 px-5 sm:px-6 py-3 rounded-xl font-semibold text-sm
-                           bg-indigo-600 text-white hover:bg-indigo-500 transition-all duration-200"
-                whileHover={{ scale: 1.03, boxShadow: '0 0 25px rgba(99,102,241,0.5)' }}
-                whileTap={{ scale: 0.97 }}
+                as="a"
+                strength={0.3}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm
+                           bg-indigo-600 text-white hover:bg-indigo-500 transition-all duration-200
+                           shadow-[0_0_0px_rgba(99,102,241,0)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)]
+                           relative overflow-hidden group"
               >
-                View Projects
-                <ChevronRight className="w-4 h-4" />
-              </motion.a>
-              <motion.a
+                <span className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="relative z-10 flex items-center gap-2">
+                  View Projects
+                  <ChevronRight className="w-4 h-4" />
+                </span>
+              </MagneticButton>
+
+              <MagneticButton
                 href="#contact"
-                className="flex items-center gap-2 px-5 sm:px-6 py-3 rounded-xl font-semibold text-sm
-                           glass border border-white/10 text-white/80 hover:text-white hover:border-indigo-500/40 transition-all duration-200"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+                as="a"
+                strength={0.3}
+                className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm
+                           glass border border-white/10 text-white/80
+                           hover:text-white hover:border-indigo-500/40 transition-all duration-200"
               >
                 Get in Touch
-              </motion.a>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </MagneticButton>
             </motion.div>
 
             {/* Social Links */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+              variants={itemVariants}
               className="flex items-center gap-3 sm:gap-4 justify-center lg:justify-start"
             >
-              {socialLinks.map(({ icon: Icon, href, label }) => (
-                <motion.a
+              {socialLinks.map(({ icon: Icon, href, label, color }) => (
+                <MagneticButton
                   key={label}
                   href={href}
+                  as="a"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="p-2.5 rounded-lg glass border border-white/5 text-white/50
-                             hover:text-white hover:border-indigo-500/30 transition-all duration-200"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  strength={0.4}
+                  className={`p-2.5 rounded-lg glass border border-white/5 text-white/50 transition-all duration-200 ${color}`}
                 >
                   <Icon className="w-4 h-4" />
-                </motion.a>
+                </MagneticButton>
               ))}
               <div className="h-px w-6 sm:w-8 bg-white/10" />
               <span className="text-xs text-white/30 font-mono">@msv2004</span>
             </motion.div>
 
-            {/* Stats — grid on mobile for better space usage */}
+            {/* Stats — AnimatedCounter */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="grid grid-cols-4 gap-2 sm:flex sm:flex-wrap sm:gap-6 pt-2 w-full"
+              variants={itemVariants}
+              className="grid grid-cols-4 gap-3 sm:gap-6 pt-2 w-full"
             >
-              {stats.map(({ value, label }) => (
+              {stats.map(({ value, suffix, label, decimals }) => (
                 <div key={label} className="flex flex-col items-center lg:items-start">
-                  <span className="text-xl sm:text-2xl font-bold text-white">
-                    {value}
+                  <span className="text-xl sm:text-2xl font-bold text-white" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>
+                    <AnimatedCounter target={value} suffix={suffix} decimals={decimals} delay={1.2} />
                   </span>
                   <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-wider">{label}</span>
                 </div>
               ))}
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Right: 3D Sphere — desktop only (shown prominently) */}
+          {/* Right: 3D Sphere — desktop */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
+            initial={{ opacity: 0, scale: 0.7, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="relative hidden lg:flex items-center justify-center h-[550px]"
           >
-            {/* Outer glow ring */}
+            {/* Outer glow rings */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl animate-pulse" />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-60 h-60 rounded-full border border-indigo-500/10 animate-spin-slow" />
-              <div className="absolute w-80 h-80 rounded-full border border-purple-500/5 animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '30s' }} />
+              <motion.div
+                className="w-72 h-72 rounded-full border border-indigo-500/15"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+              />
+              <motion.div
+                className="absolute w-96 h-96 rounded-full border border-purple-500/8"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+              />
+              <motion.div
+                className="absolute w-[28rem] h-[28rem] rounded-full border border-cyan-500/5"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+              />
             </div>
+
             <div className="relative w-full h-full">
               <ThreeErrorBoundary>
                 <RotatingSphere />
@@ -236,24 +271,31 @@ export default function Hero() {
 
             {/* Floating info chips */}
             <motion.div
-              className="absolute top-20 -left-4 glass border border-white/10 px-3 py-2 rounded-xl"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+              className="absolute top-20 -left-4 glass-strong border border-indigo-500/20 px-4 py-3 rounded-2xl shadow-[0_0_20px_rgba(99,102,241,0.15)]"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
             >
               <p className="text-xs font-mono text-indigo-400">CNN Accuracy</p>
-              <p className="text-lg font-bold text-white">90%+</p>
+              <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>90%+</p>
             </motion.div>
 
             <motion.div
-              className="absolute bottom-24 -right-6 glass border border-white/10 px-3 py-2 rounded-xl"
-              animate={{ y: [0, 10, 0] }}
+              className="absolute bottom-28 -right-4 glass-strong border border-cyan-500/20 px-4 py-3 rounded-2xl shadow-[0_0_20px_rgba(34,211,238,0.15)]"
+              animate={{ y: [0, 12, 0] }}
               transition={{ repeat: Infinity, duration: 5, ease: 'easeInOut', delay: 1 }}
             >
               <p className="text-xs font-mono text-cyan-400">Pipeline Optimized</p>
-              <p className="text-lg font-bold text-white">90% faster</p>
+              <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>90% faster</p>
             </motion.div>
 
-
+            <motion.div
+              className="absolute top-1/2 -right-6 glass-strong border border-purple-500/20 px-4 py-3 rounded-2xl shadow-[0_0_20px_rgba(139,92,246,0.15)]"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 6, ease: 'easeInOut', delay: 2 }}
+            >
+              <p className="text-xs font-mono text-purple-400">CGPA</p>
+              <p className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>8.93</p>
+            </motion.div>
           </motion.div>
         </div>
 
@@ -261,18 +303,18 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          transition={{ delay: 2 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         >
-          <span className="text-xs text-white/30 tracking-widest uppercase">Scroll</span>
+          <span className="text-xs text-white/25 tracking-widest uppercase font-mono">Scroll</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           >
-            <ArrowDown className="w-4 h-4 text-white/30" />
+            <ArrowDown className="w-4 h-4 text-white/25" />
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

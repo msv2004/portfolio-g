@@ -31,7 +31,7 @@ const projects = [
     id: 2,
     title: 'VR StudioPlayz',
     subtitle: 'VR Developer',
-    period: '2024',
+    period: '2025',
     category: 'VR / XR',
     color: 'purple',
     icon: Headset,

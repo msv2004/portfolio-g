@@ -41,8 +41,17 @@ export default function Footer() {
             transition={{ duration: 0.5 }}
           >
             <div className="font-mono text-xl font-bold mb-3">
-              <span className="gradient-text" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>MSV</span>
-              <span className="text-white/30 ml-1 text-sm">_.dev</span>
+              <span
+                style={{
+                  background: 'linear-gradient(135deg,#6366f1,#8b5cf6,#22d3ee)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontFamily: 'var(--font-syne, var(--font-inter))',
+                }}
+              >
+                MSV-DEV
+              </span>
             </div>
             <p className="text-white/40 text-sm leading-relaxed max-w-xs">
               AI Engineer & Software Developer. Building intelligent systems that solve real-world problems.
@@ -110,14 +119,14 @@ export default function Footer() {
           className="flex flex-col md:flex-row items-center justify-between gap-4"
         >
           <div className="flex items-center gap-1.5 text-xs text-white/30">
-            <span>© 2025 Marri Shashe Vikaash · Made with</span>
+            <span>@2026 Marri Shashe Vikaash . Made with</span>
             <motion.div
               animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
             >
               <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
             </motion.div>
-            <span>in Chennai</span>
+            <span>🔥</span>
           </div>
 
           <div className="flex items-center gap-2">

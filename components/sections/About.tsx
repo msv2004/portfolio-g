@@ -1,63 +1,152 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useCallback } from 'react';
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import SectionHeader from '@/components/ui/SectionHeader';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import { GraduationCap, MapPin, Brain, Code2, Cloud, Shield } from 'lucide-react';
 
+/* ─────────────────────────────────────────────
+   3‑D Profile Card — matches reference image
+───────────────────────────────────────────── */
+function ProfileCard() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springX = useSpring(rotateX, { stiffness: 180, damping: 22 });
+  const springY = useSpring(rotateY, { stiffness: 180, damping: 22 });
+  const glowX = useMotionValue(50);
+  const glowY = useMotionValue(50);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    rotateX.set(((e.clientY - cy) / (rect.height / 2)) * -10);
+    rotateY.set(((e.clientX - cx) / (rect.width / 2)) * 10);
+    glowX.set(((e.clientX - rect.left) / rect.width) * 100);
+    glowY.set(((e.clientY - rect.top) / rect.height) * 100);
+  }, [rotateX, rotateY, glowX, glowY]);
+
+  const handleMouseLeave = useCallback(() => {
+    rotateX.set(0);
+    rotateY.set(0);
+    glowX.set(50);
+    glowY.set(50);
+  }, [rotateX, rotateY, glowX, glowY]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      initial={{ opacity: 0, y: 40, scale: 0.92 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        rotateX: springX,
+        rotateY: springY,
+        transformPerspective: 1200,
+        transformStyle: 'preserve-3d',
+      }}
+      className="relative w-[270px] sm:w-[300px] mx-auto select-none"
+    >
+      {/* Ambient glow behind */}
+      <div className="absolute inset-0 -z-10 rounded-2xl scale-110 blur-3xl bg-gradient-to-br from-pink-600/30 via-purple-600/20 to-indigo-600/25" />
+
+      {/* Rotating gradient border */}
+      <div
+        className="p-[2px] rounded-[20px]"
+        style={{
+          background: 'linear-gradient(135deg, #f472b6, #8b5cf6, #6366f1, #ec4899, #f472b6)',
+          backgroundSize: '300% 300%',
+          animation: 'border-spin 4s linear infinite',
+        }}
+      >
+        {/* Inner card */}
+        <div className="relative rounded-[18px] overflow-hidden bg-[#0c0c14]" style={{ height: '360px' }}>
+          {/* Profile image — priority for fast load */}
+          <Image
+            src="/profile.png"
+            alt="Marri Shashe Vikaash"
+            fill
+            priority
+            sizes="300px"
+            className="object-cover object-top"
+            style={{ transform: 'translateZ(20px)' }}
+          />
+
+          {/* Subtle inner glow on hover */}
+          <motion.div
+            className="absolute inset-0 pointer-events-none rounded-[18px]"
+            style={{
+              background: `radial-gradient(circle at 50% 50%, rgba(139,92,246,0.12), transparent 70%)`,
+              opacity: 0.6,
+            }}
+          />
+
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#0c0c14] to-transparent" />
+
+          {/* Available badge */}
+          <motion.div
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-4 py-2 rounded-full
+                       bg-black/70 backdrop-blur-xl border border-white/10 whitespace-nowrap shadow-lg"
+            style={{ transform: 'translateZ(30px)' }}
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            </span>
+            <span className="text-xs font-semibold text-white">Available for opportunities</span>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Left dot decoration */}
+      <div
+        className="absolute -left-5 top-[30%] w-[36px] h-[80px] opacity-40 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(168,85,247,0.7) 1.5px, transparent 1.5px)',
+          backgroundSize: '9px 9px',
+        }}
+      />
+      {/* Right dot decoration */}
+      <div
+        className="absolute -right-5 top-[55%] w-[36px] h-[80px] opacity-40 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(236,72,153,0.7) 1.5px, transparent 1.5px)',
+          backgroundSize: '9px 9px',
+        }}
+      />
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Education timeline data
+───────────────────────────────────────────── */
 const education = [
-  {
-    degree: 'B.E. Computer Science & Engineering',
-    school: 'Saveetha School of Engineering',
-    period: '2022 – 2026',
-    score: 'CGPA 8.93/10',
-    location: 'Chennai, Tamil Nadu',
-    color: 'indigo',
-  },
-  {
-    degree: 'Intermediate — MPC',
-    school: 'Resonance Junior College',
-    period: '2020 – 2022',
-    score: '83.9%',
-    location: 'Khammam, Telangana',
-    color: 'purple',
-  },
-  {
-    degree: 'Secondary Education (SSC)',
-    school: 'Sri Chaitanya Concept School',
-    period: '2019 – 2020',
-    score: 'GPA 10/10',
-    location: 'Khammam, Telangana',
-    color: 'cyan',
-  },
+  { degree: 'B.E. Computer Science & Engineering', school: 'Saveetha School of Engineering', period: '2022 – 2026', score: 'CGPA 8.93/10', location: 'Chennai, Tamil Nadu', color: 'indigo' },
+  { degree: 'Intermediate — MPC', school: 'Resonance Junior College', period: '2020 – 2022', score: '83.9%', location: 'Khammam, Telangana', color: 'purple' },
+  { degree: 'Secondary Education (SSC)', school: 'Sri Chaitanya Concept School', period: '2019 – 2020', score: 'GPA 10/10', location: 'Khammam, Telangana', color: 'cyan' },
 ];
 
 const interests = [
-  { icon: Brain, label: 'Artificial Intelligence & ML', color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/20' },
-  { icon: Code2, label: 'Software Engineering', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
-  { icon: Cloud, label: 'Cloud Computing (Azure, AWS)', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20' },
-  { icon: Shield, label: 'Cybersecurity & Intrusion Detection', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+  { icon: Brain,  label: 'Artificial Intelligence & ML',          color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/20' },
+  { icon: Code2,  label: 'Software Engineering',                  color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/20' },
+  { icon: Cloud,  label: 'Cloud Computing (Azure, AWS)',           color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/20' },
+  { icon: Shield, label: 'Cybersecurity & Intrusion Detection',   color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
 ];
 
-const colorMap: Record<string, string> = {
-  indigo: 'border-indigo-500/30 bg-indigo-500/5',
-  purple: 'border-purple-500/30 bg-purple-500/5',
-  cyan: 'border-cyan-500/30 bg-cyan-500/5',
-};
-
-const dotMap: Record<string, string> = {
-  indigo: 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]',
-  purple: 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.6)]',
-  cyan: 'bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.6)]',
-};
-
-const scoreColor: Record<string, string> = {
-  indigo: 'bg-indigo-500/15 text-indigo-400',
-  purple: 'bg-purple-500/15 text-purple-400',
-  cyan: 'bg-cyan-500/15 text-cyan-400',
-};
+const colorMap: Record<string, string> = { indigo: 'border-indigo-500/30 bg-indigo-500/5', purple: 'border-purple-500/30 bg-purple-500/5', cyan: 'border-cyan-500/30 bg-cyan-500/5' };
+const dotMap:   Record<string, string> = { indigo: 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.7)]', purple: 'bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.7)]', cyan: 'bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.7)]' };
+const scoreMap: Record<string, string> = { indigo: 'bg-indigo-500/15 text-indigo-400', purple: 'bg-purple-500/15 text-purple-400', cyan: 'bg-cyan-500/15 text-cyan-400' };
 
 export default function About() {
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -74,88 +163,68 @@ export default function About() {
           subtitle="A final-year CS student at Saveetha School of Engineering building AI-powered solutions across ML, cloud, and cybersecurity."
         />
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          {/* Left */}
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+
+          {/* ── Left Column ── */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-5"
+            className="flex flex-col items-center gap-7"
           >
-            {/* About Card with Spotlight */}
+            {/* 3D Profile Card */}
+            <ProfileCard />
+
+            {/* About text */}
             <SpotlightCard
-              className="glass-card rounded-2xl p-6 sm:p-8 border border-white/8"
-              spotlightColor="rgba(99,102,241,0.12)"
+              className="glass-card rounded-2xl p-6 border border-white/8 w-full"
+              spotlightColor="rgba(99,102,241,0.1)"
             >
-              <div className="flex items-center gap-4 mb-5">
-                {/* Profile Photo with 3D tilt */}
-                <motion.div
-                  className="relative w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-indigo-500/40 flex-shrink-0"
-                  whileHover={{ scale: 1.05, rotateY: 8, rotateX: -4 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  <Image
-                    src="/profile.png"
-                    alt="Marri Shashe Vikaash"
-                    fill
-                    className="object-cover object-top"
-                    priority
-                  />
-                </motion.div>
-                <div>
-                  <p className="font-bold text-white text-base" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>Marri Shashe Vikaash</p>
-                  <p className="text-xs text-white/40 mt-0.5">AI Engineer · Software Developer</p>
-                  <p className="text-xs text-white/30 flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3" />
-                    Khammam, Telangana · Chennai, Tamil Nadu
-                  </p>
-                </div>
+              <div className="mb-2 flex items-center gap-2">
+                <div className="h-px flex-1 bg-gradient-to-r from-indigo-500/50 to-transparent" />
+                <span className="text-xs text-indigo-400 font-semibold tracking-widest uppercase">Bio</span>
+                <div className="h-px flex-1 bg-gradient-to-l from-indigo-500/50 to-transparent" />
               </div>
               <p className="text-white/60 text-sm leading-7">
-                I&apos;m a final-year B.Tech Computer Science student with a <strong className="text-white/90">CGPA of 8.93</strong>,
-                passionate about building scalable, intelligent solutions. My expertise spans
-                software development, AI/ML, and cloud computing, with hands-on experience using
-                Python, Java, SQL, TensorFlow, and Azure.
+                I&apos;m a final-year B.Tech CS student with a{' '}
+                <strong className="text-white/90">CGPA of 8.93</strong>, passionate about building
+                scalable, intelligent solutions. My expertise spans software development, AI/ML, and cloud
+                computing with hands-on internship experience at{' '}
+                <strong className="text-indigo-400">Prodigy InfoTech</strong> and{' '}
+                <strong className="text-purple-400">Bharat Intern</strong> — delivering CNN classifiers at{' '}
+                <strong className="text-white/90">90%+ accuracy</strong> and optimizing ML pipelines by{' '}
+                <strong className="text-cyan-400">90%</strong>.
               </p>
-              <p className="text-white/60 text-sm leading-7 mt-4">
-                Through internships at <strong className="text-indigo-400">Prodigy InfoTech</strong> and{' '}
-                <strong className="text-purple-400">Bharat Intern</strong>, I applied CNN and SVM models
-                on real datasets, optimized ML pipelines for <strong className="text-white/90">90% faster execution</strong>,
-                and delivered data-driven insights via Power BI.
-              </p>
-              <p className="text-white/60 text-sm leading-7 mt-4">
-                I&apos;m also involved in research spanning <strong className="text-cyan-400">phishing detection</strong>,
-                deep learning, and network intrusion detection — published in academic venues. Currently seeking
-                internships and entry-level roles where I can make a measurable impact.
+              <p className="text-white/60 text-sm leading-7 mt-3">
+                My research spans <strong className="text-indigo-400">phishing detection</strong>,
+                deep learning robustness, and network intrusion detection — published in academic venues.
               </p>
             </SpotlightCard>
 
-            {/* Interests */}
-            <div className="glass-card rounded-2xl p-6 border border-white/8">
-              <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">Core Interests</h3>
-              <div className="grid grid-cols-2 gap-3">
+            {/* Interests + Languages */}
+            <SpotlightCard
+              className="glass-card rounded-2xl p-5 border border-white/8 w-full"
+              spotlightColor="rgba(99,102,241,0.08)"
+            >
+              <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Core Interests</h3>
+              <div className="grid grid-cols-2 gap-2.5 mb-5">
                 {interests.map(({ icon: Icon, label, color, bg }, i) => (
                   <motion.div
                     key={label}
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.08 }}
+                    transition={{ duration: 0.4, delay: i * 0.07 }}
                     whileHover={{ scale: 1.03, y: -2 }}
-                    className={`flex items-center gap-2.5 p-3 rounded-xl border ${bg} transition-all duration-200`}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border ${bg} transition-all`}
                   >
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${color}`} />
-                    <span className="text-xs text-white/70 leading-tight">{label}</span>
+                    <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${color}`} />
+                    <span className="text-xs text-white/65 leading-tight">{label}</span>
                   </motion.div>
                 ))}
               </div>
-            </div>
-
-            {/* Languages */}
-            <div className="glass-card rounded-2xl p-5 border border-white/8">
-              <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-3">Languages</h3>
+              <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">Languages</h3>
               <div className="flex flex-wrap gap-2">
                 {['English', 'Hindi', 'Telugu', 'German (A2)'].map((lang, i) => (
                   <motion.span
@@ -171,10 +240,10 @@ export default function About() {
                   </motion.span>
                 ))}
               </div>
-            </div>
+            </SpotlightCard>
           </motion.div>
 
-          {/* Right: Education Timeline */}
+          {/* ── Right Column: Education Timeline ── */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -188,7 +257,6 @@ export default function About() {
             </h3>
 
             <div ref={timelineRef} className="relative">
-              {/* Animated timeline line */}
               <div className="absolute left-5 top-6 bottom-6 w-px bg-white/5 hidden md:block" />
               <motion.div
                 className="absolute left-5 top-6 w-px bg-gradient-to-b from-indigo-500 via-purple-500 to-cyan-500 hidden md:block origin-top"
@@ -205,28 +273,19 @@ export default function About() {
                     transition={{ duration: 0.5, delay: i * 0.18 }}
                   >
                     <SpotlightCard
-                      className={`relative pl-14 p-5 rounded-2xl border ${colorMap[edu.color]} transition-all duration-300 hover:scale-[1.015] cursor-default`}
-                      spotlightColor={
-                        edu.color === 'indigo' ? 'rgba(99,102,241,0.1)' :
-                        edu.color === 'purple' ? 'rgba(139,92,246,0.1)' :
-                        'rgba(34,211,238,0.1)'
-                      }
+                      className={`relative pl-14 p-5 rounded-2xl border ${colorMap[edu.color]} hover:scale-[1.015] transition-all duration-300 cursor-default`}
+                      spotlightColor={edu.color === 'indigo' ? 'rgba(99,102,241,0.1)' : edu.color === 'purple' ? 'rgba(139,92,246,0.1)' : 'rgba(34,211,238,0.1)'}
                     >
-                      {/* Timeline dot */}
                       <div className={`absolute left-3.5 top-6 w-3 h-3 rounded-full ${dotMap[edu.color]} ring-2 ring-[#050508] z-10`} />
-
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <h4 className="text-sm font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>{edu.degree}</h4>
                         <span className="text-xs font-mono text-white/40 whitespace-nowrap">{edu.period}</span>
                       </div>
                       <p className="text-xs text-white/60 mb-2">{edu.school}</p>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${scoreColor[edu.color]}`}>
-                          {edu.score}
-                        </span>
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${scoreMap[edu.color]}`}>{edu.score}</span>
                         <span className="text-xs text-white/30 flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {edu.location}
+                          <MapPin className="w-3 h-3" />{edu.location}
                         </span>
                       </div>
                     </SpotlightCard>
@@ -240,9 +299,7 @@ export default function About() {
               className="glass-card rounded-2xl p-6 border border-white/8 mt-2"
               spotlightColor="rgba(99,102,241,0.08)"
             >
-              <h3 className="text-sm font-semibold text-white/50 uppercase tracking-wider mb-4">
-                Leadership & Activities
-              </h3>
+              <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Leadership & Activities</h3>
               <div className="flex flex-col gap-3">
                 {[
                   { title: 'Student Organizer', desc: 'NEXTRA Symposium 2023 — managed technical events & team operations' },

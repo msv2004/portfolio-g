@@ -100,13 +100,12 @@ export default function Navbar() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
-            <span
+          <span
               className="gradient-text"
               style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}
             >
-              MSV
+              MSV-DEV
             </span>
-            <span className="text-white/40 ml-1">_.dev</span>
             {/* Shimmer on hover */}
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shimmer rounded" />
           </motion.a>

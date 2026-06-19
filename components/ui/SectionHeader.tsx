@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import TextReveal from '@/components/ui/TextReveal';
 
 interface SectionHeaderProps {
   badge?: string;
@@ -40,13 +39,40 @@ export default function SectionHeader({ badge, title, highlight, subtitle }: Sec
         className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight"
         style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}
       >
-        <TextReveal text={title} mode="words" delay={0.1} />
+        {/* Main title words — white, word-by-word reveal */}
+        {title.split(' ').map((word, i) => (
+          <span key={i} className="overflow-hidden inline-block mr-[0.3em]">
+            <motion.span
+              className="inline-block text-white"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {word}
+            </motion.span>
+          </span>
+        ))}
+
+        {/* Gradient highlight — applied inline directly to the text node so background-clip works */}
         {highlight && (
           <>
             {' '}
-            <span className="gradient-text">
-              <TextReveal text={highlight} mode="words" delay={0.25} />
-            </span>
+            <motion.span
+              className="inline-block"
+              style={{
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #22d3ee 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+              initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.35, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {highlight}
+            </motion.span>
           </>
         )}
       </h2>

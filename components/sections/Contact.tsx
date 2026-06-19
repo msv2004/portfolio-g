@@ -3,15 +3,12 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
-import Turnstile from '@/components/ui/Turnstile';
 import { Mail, Linkedin, Github, Send, CheckCircle, AlertCircle, Loader2, MapPin, Phone } from 'lucide-react';
 
 // EmailJS config — fall back to hardcoded keys if environment variables are not available
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_ym8w2qc';
 const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_wb6i2ho';
 const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'P4Pkk7F9t90b_8j_n';
-
-const TURNSTILE_SITE_KEY = '1x000000000000000000001X';
 
 interface FormData {
   name: string;
@@ -69,7 +66,6 @@ const socialLinks = [
 export default function Contact() {
   const [form, setForm] = useState<FormData>({ name: '', email: '', subject: '', message: '', honeypot: '' });
   const [status, setStatus] = useState<Status>('idle');
-  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -142,13 +138,6 @@ export default function Contact() {
       return;
     }
 
-    // 5. Check Turnstile Token
-    if (!turnstileToken) {
-      setErrorMsg('Please complete the security check.');
-      setStatus('error');
-      return;
-    }
-
     setStatus('sending');
     setErrorMsg('');
 
@@ -166,13 +155,11 @@ export default function Contact() {
           subject: subjectTrim,
           message: messageTrim,
           to_email: 'shashevikaash@gmail.com',
-          'g-recaptcha-response': turnstileToken, // Pass Turnstile token to EmailJS (using standard reCAPTCHA field)
         },
         EMAILJS_PUBLIC_KEY
       );
       setStatus('success');
       setForm({ name: '', email: '', subject: '', message: '', honeypot: '' });
-      setTurnstileToken('');
       setTimeout(() => setStatus('idle'), 5000);
     } catch {
       setStatus('error');
@@ -332,23 +319,6 @@ export default function Contact() {
                 />
               </div>
 
-              {/* Security Verification */}
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-medium text-white/50 uppercase tracking-wider">Security Check</label>
-                <Turnstile
-                  siteKey={TURNSTILE_SITE_KEY}
-                  onVerify={(token) => {
-                    setTurnstileToken(token);
-                    if (status === 'error' && errorMsg === 'Please complete the security check.') {
-                      setStatus('idle');
-                      setErrorMsg('');
-                    }
-                  }}
-                  onExpire={() => setTurnstileToken('')}
-                  onError={() => setTurnstileToken('')}
-                />
-              </div>
-
               {/* Status */}
               {status === 'success' && (
                 <div className="flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3">
@@ -366,12 +336,12 @@ export default function Contact() {
               {/* Submit */}
               <motion.button
                 type="submit"
-                disabled={status === 'sending' || !turnstileToken}
+                disabled={status === 'sending'}
                 className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm
                            bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed
                            text-white transition-all duration-200"
-                whileHover={status !== 'sending' && turnstileToken ? { scale: 1.02, boxShadow: '0 0 25px rgba(99,102,241,0.5)' } : {}}
-                whileTap={status !== 'sending' && turnstileToken ? { scale: 0.98 } : {}}
+                whileHover={status !== 'sending' ? { scale: 1.02, boxShadow: '0 0 25px rgba(99,102,241,0.5)' } : {}}
+                whileTap={status !== 'sending' ? { scale: 0.98 } : {}}
               >
                 {status === 'sending' ? (
                   <>

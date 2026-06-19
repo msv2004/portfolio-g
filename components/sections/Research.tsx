@@ -80,7 +80,7 @@ export default function Research() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/3 rounded-full blur-[100px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
         <SectionHeader
           badge="Research"
           title="Publication"
@@ -106,7 +106,7 @@ export default function Research() {
         </motion.div>
 
         {/* Publication cards — bento layout */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
           {publications.map((pub, i) => {
             const c = domainColors[pub.color];
             const Icon = pub.icon;
@@ -167,7 +167,7 @@ export default function Research() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-12 glass-strong rounded-2xl p-8 border border-white/5 text-center"
+          className="mt-10 sm:mt-12 glass-strong rounded-2xl p-6 sm:p-8 border border-white/5 text-center"
         >
           <h3 className="text-lg font-bold text-white mb-2">Research Interests</h3>
           <p className="text-white/50 text-sm mb-6 max-w-xl mx-auto">

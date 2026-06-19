@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 import SectionHeader from '@/components/ui/SectionHeader';
 import { Mail, Linkedin, Github, Send, CheckCircle, AlertCircle, Loader2, MapPin, Phone } from 'lucide-react';
 
-// EmailJS config — replace with your actual IDs
-const EMAILJS_SERVICE_ID = 'service_portfolio';
-const EMAILJS_TEMPLATE_ID = 'template_contact';
-const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+// EmailJS config — loaded from .env.local (never hardcoded)
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? '';
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? '';
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? '';
 
 interface FormData {
   name: string;
@@ -76,6 +76,9 @@ export default function Contact() {
     setStatus('sending');
 
     try {
+      if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+        throw new Error('EmailJS not configured');
+      }
       const emailjs = await import('@emailjs/browser');
       await emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -107,7 +110,7 @@ export default function Contact() {
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-indigo-600/5 blur-[100px]" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
         <SectionHeader
           badge="Contact"
           title="Let's"
@@ -115,7 +118,7 @@ export default function Contact() {
           subtitle="Open to internships, full-time roles, collaborations, and research opportunities. Let's build something great together."
         />
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left: Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}

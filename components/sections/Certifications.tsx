@@ -118,7 +118,7 @@ const issuers = [...new Set(certifications.map((c) => c.issuer))];
 export default function Certifications() {
   return (
     <section id="certifications" className="section relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           badge="Certifications"
           title="Verified"
@@ -148,7 +148,7 @@ export default function Certifications() {
         </motion.div>
 
         {/* Certs Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {certifications.map((cert, i) => {
             const c = colorMap[cert.color];
             return (

@@ -54,7 +54,7 @@ const dotMap: Record<string, string> = {
 export default function About() {
   return (
     <section id="about" className="section relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           badge="About Me"
           title="Passionate about"
@@ -62,7 +62,7 @@ export default function About() {
           subtitle="A final-year CS student at Saveetha School of Engineering building AI-powered solutions across ML, cloud, and cybersecurity."
         />
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Left: About Text + Interests */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -72,7 +72,7 @@ export default function About() {
             className="flex flex-col gap-6"
           >
             {/* About Card */}
-            <div className="glass-strong rounded-2xl p-8 border border-white/5">
+            <div className="glass-strong rounded-2xl p-6 sm:p-8 border border-white/5">
               <div className="flex items-center gap-4 mb-5">
                 {/* Profile Photo */}
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden ring-2 ring-indigo-500/30 flex-shrink-0">

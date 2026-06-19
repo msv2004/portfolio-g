@@ -143,7 +143,7 @@ export default function Projects() {
 
   return (
     <section id="projects" className="section relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           badge="Projects"
           title="What I've"
@@ -156,7 +156,7 @@ export default function Projects() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 mb-10"
+          className="flex flex-wrap justify-center gap-2 mb-8 sm:mb-10"
         >
           {FILTERS.map((f) => (
             <button
@@ -174,7 +174,7 @@ export default function Projects() {
         </motion.div>
 
         {/* Project Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <AnimatePresence mode="popLayout">
             {filtered.map((project, i) => {
               const c = colorConfig[project.color];

@@ -57,7 +57,7 @@ const colorConfig: Record<string, { badge: string; border: string; dot: string; 
 export default function Experience() {
   return (
     <section id="experience" className="section relative">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <SectionHeader
           badge="Experience"
           title="Professional"
@@ -85,7 +85,7 @@ export default function Experience() {
                   {/* Timeline dot */}
                   <div className={`absolute left-6 top-7 w-4 h-4 rounded-full ${c.dot} ring-4 ring-[#050508] hidden md:block`} />
 
-                  <div className={`glass rounded-2xl p-7 border ${c.border} transition-all duration-300 group hover:scale-[1.01]`}>
+                  <div className={`glass rounded-2xl p-5 sm:p-7 border ${c.border} transition-all duration-300 group hover:scale-[1.01]`}>
                     {/* Top row */}
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
                       <div className="flex items-start gap-4">

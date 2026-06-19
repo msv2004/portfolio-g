@@ -98,7 +98,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 text-white/70 hover:text-white"
+            className="md:hidden p-2.5 text-white/70 hover:text-white rounded-lg glass border border-white/5 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -114,18 +114,29 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 left-0 right-0 z-40 glass border-b border-white/5 px-6 py-4 flex flex-col gap-2"
+            className="fixed top-16 left-0 right-0 z-40 glass border-b border-white/5 px-6 py-4 flex flex-col gap-1"
           >
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="py-2.5 text-sm text-white/70 hover:text-white border-b border-white/5 last:border-0"
+                className="py-3 px-3 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg border-b border-white/5 last:border-0 transition-colors"
               >
                 {link.label}
               </a>
             ))}
+            {/* Resume button in mobile menu */}
+            <a
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileOpen(false)}
+              className="mt-2 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Download Resume
+            </a>
           </motion.div>
         )}
       </AnimatePresence>

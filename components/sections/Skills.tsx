@@ -131,7 +131,7 @@ function SkillBar({ name, level, color, delay }: Skill & { delay: number }) {
 export default function Skills() {
   return (
     <section id="skills" className="section relative">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeader
           badge="Skills"
           title="Technical"
@@ -140,7 +140,7 @@ export default function Skills() {
         />
 
         {/* Skill Categories Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 md:mb-16">
           {skillCategories.map((cat, catIdx) => (
             <motion.div
               key={cat.category}
@@ -148,7 +148,7 @@ export default function Skills() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: catIdx * 0.1 }}
-              className={`glass rounded-2xl p-6 border ${cat.borderColor} hover:scale-[1.01] transition-transform duration-300`}
+              className={`glass rounded-2xl p-5 sm:p-6 border ${cat.borderColor} hover:scale-[1.01] transition-transform duration-300`}
             >
               {/* Header */}
               <div className="flex items-center gap-3 mb-5">

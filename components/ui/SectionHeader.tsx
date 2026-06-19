@@ -16,7 +16,7 @@ export default function SectionHeader({ badge, title, highlight, subtitle }: Sec
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className="text-center mb-16"
+      className="text-center mb-12 md:mb-16"
     >
       {badge && (
         <motion.span
@@ -31,12 +31,12 @@ export default function SectionHeader({ badge, title, highlight, subtitle }: Sec
           {badge}
         </motion.span>
       )}
-      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
         {title}{' '}
         {highlight && <span className="gradient-text">{highlight}</span>}
       </h2>
       {subtitle && (
-        <p className="text-white/50 max-w-xl mx-auto text-base leading-relaxed">{subtitle}</p>
+        <p className="text-white/50 max-w-xl mx-auto text-sm sm:text-base leading-relaxed px-2">{subtitle}</p>
       )}
       {/* Decorative line */}
       <div className="flex items-center justify-center gap-3 mt-6">

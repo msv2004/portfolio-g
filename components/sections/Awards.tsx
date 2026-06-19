@@ -120,7 +120,7 @@ export default function Awards() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/3 rounded-full blur-[100px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
         <SectionHeader
           badge="Awards & Achievements"
           title="Recognition &"
@@ -128,7 +128,7 @@ export default function Awards() {
           subtitle="Awards, achievements, and recognitions earned through technical excellence and leadership."
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {awards.map((award, i) => {
             const c = colorConfig[award.color];
             return (

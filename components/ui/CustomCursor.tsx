@@ -33,35 +33,21 @@ export default function CustomCursor() {
     const onMouseDown = () => setIsClicking(true);
     const onMouseUp = () => setIsClicking(false);
 
-    const onHoverStart = () => setIsHovering(true);
-    const onHoverEnd = () => setIsHovering(false);
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest('a, button, [role="button"], input, textarea, select, label, [data-cursor-hover]')) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
+    };
 
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseleave', onLeave);
     document.addEventListener('mouseenter', onEnter);
     document.addEventListener('mousedown', onMouseDown);
     document.addEventListener('mouseup', onMouseUp);
-
-    const interactables = document.querySelectorAll(
-      'a, button, [role="button"], input, textarea, select, label[for], [data-cursor-hover]'
-    );
-    interactables.forEach((el) => {
-      el.addEventListener('mouseenter', onHoverStart);
-      el.addEventListener('mouseleave', onHoverEnd);
-    });
-
-    // Re-observe on DOM mutations
-    const observer = new MutationObserver(() => {
-      document.querySelectorAll(
-        'a, button, [role="button"], input, textarea, [data-cursor-hover]'
-      ).forEach((el) => {
-        el.removeEventListener('mouseenter', onHoverStart);
-        el.removeEventListener('mouseleave', onHoverEnd);
-        el.addEventListener('mouseenter', onHoverStart);
-        el.addEventListener('mouseleave', onHoverEnd);
-      });
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('mouseover', onMouseOver);
 
     return () => {
       document.removeEventListener('mousemove', onMove);
@@ -69,7 +55,7 @@ export default function CustomCursor() {
       document.removeEventListener('mouseenter', onEnter);
       document.removeEventListener('mousedown', onMouseDown);
       document.removeEventListener('mouseup', onMouseUp);
-      observer.disconnect();
+      document.removeEventListener('mouseover', onMouseOver);
     };
   }, [mouseX, mouseY]);
 

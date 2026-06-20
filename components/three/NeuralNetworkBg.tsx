@@ -35,11 +35,13 @@ export default function NeuralNetworkBg() {
     resize();
     window.addEventListener('resize', resize);
 
-    const NODE_COUNT = 80;
-    const CONNECT_DIST = 150;
-    let animId: number;
+    const isMobile = window.innerWidth < 768;
+    const NODE_COUNT = isMobile ? 35 : 80;
+    const CONNECT_DIST = isMobile ? 100 : 150;
+    let animId: number | null = null;
     let mouseX = 0;
     let mouseY = 0;
+    let isVisible = false;
 
     const nodes: Node[] = Array.from({ length: NODE_COUNT }, () => ({
       x: Math.random() * canvas.width,
@@ -68,6 +70,7 @@ export default function NeuralNetworkBg() {
     };
 
     const draw = () => {
+      if (!isVisible) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       nodes.forEach((node) => {
@@ -142,18 +145,35 @@ export default function NeuralNetworkBg() {
       animId = requestAnimationFrame(draw);
     };
 
+    const hasTouch = window.matchMedia('(pointer: coarse)').matches;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
-    window.addEventListener('mousemove', handleMouseMove);
 
-    draw();
+    if (!hasTouch) {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const wasVisible = isVisible;
+        isVisible = entry.isIntersecting;
+        if (isVisible && !wasVisible) {
+          draw();
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', resize);
-      window.removeEventListener('mousemove', handleMouseMove);
+      if (!hasTouch) {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
     };
   }, []);
 

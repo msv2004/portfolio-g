@@ -1,20 +1,24 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
 import Navbar from '@/components/ui/Navbar';
 import Hero from '@/components/sections/Hero';
-import About from '@/components/sections/About';
-import Skills from '@/components/sections/Skills';
-import Experience from '@/components/sections/Experience';
-import Projects from '@/components/sections/Projects';
-import Research from '@/components/sections/Research';
-import Awards from '@/components/sections/Awards';
-import Certifications from '@/components/sections/Certifications';
-import Contact from '@/components/sections/Contact';
-import Footer from '@/components/ui/Footer';
 import PageLoader from '@/components/ui/PageLoader';
 import CustomCursor from '@/components/ui/CustomCursor';
 import ScrollProgress from '@/components/ui/ScrollProgress';
 import { motion, useScroll, useTransform } from 'framer-motion';
+
+// Code-split below-the-fold sections
+const About = dynamic(() => import('@/components/sections/About'), { ssr: true });
+const Skills = dynamic(() => import('@/components/sections/Skills'), { ssr: true });
+const Experience = dynamic(() => import('@/components/sections/Experience'), { ssr: true });
+const Projects = dynamic(() => import('@/components/sections/Projects'), { ssr: true });
+const Research = dynamic(() => import('@/components/sections/Research'), { ssr: true });
+const Awards = dynamic(() => import('@/components/sections/Awards'), { ssr: true });
+const Certifications = dynamic(() => import('@/components/sections/Certifications'), { ssr: true });
+const Contact = dynamic(() => import('@/components/sections/Contact'), { ssr: true });
+const Footer = dynamic(() => import('@/components/ui/Footer'), { ssr: true });
 
 export default function Home() {
   const { scrollYProgress } = useScroll();

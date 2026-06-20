@@ -70,7 +70,7 @@ function ProfileCard() {
         <div className="relative rounded-[18px] overflow-hidden bg-[#0c0c14]" style={{ height: '360px' }}>
           {/* Profile image — priority for fast load */}
           <Image
-            src="/profile.png"
+            src="/profile.webp"
             alt="Marri Shashe Vikaash"
             fill
             priority

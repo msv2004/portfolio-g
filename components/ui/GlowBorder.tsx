@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface GlowBorderProps {
@@ -18,11 +18,29 @@ export default function GlowBorder({
   glowColors = ['#6366f1', '#8b5cf6', '#22d3ee', '#6366f1'],
   active = false,
 }: GlowBorderProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   const visible = active || hovered;
+  const isAnimating = visible && inView;
 
   return (
     <div
+      ref={containerRef}
       className={`relative ${className}`}
       style={{ borderRadius }}
       onMouseEnter={() => setHovered(true)}
@@ -40,7 +58,7 @@ export default function GlowBorder({
           style={{
             background: `linear-gradient(135deg, ${glowColors.join(', ')})`,
             backgroundSize: '300% 300%',
-            animation: visible ? 'border-spin 3s linear infinite' : 'none',
+            animation: isAnimating ? 'border-spin 3s linear infinite' : 'none',
             borderRadius: 'inherit',
           }}
         />

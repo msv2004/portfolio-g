@@ -228,8 +228,14 @@ body {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0%); }
 }
-.marquee-left { animation: marquee-left 30s linear infinite; }
-.marquee-right { animation: marquee-right 30s linear infinite; }
+.marquee-left {
+  animation: marquee-left 30s linear infinite;
+  will-change: transform;
+}
+.marquee-right {
+  animation: marquee-right 30s linear infinite;
+  will-change: transform;
+}
 .marquee-left:hover, .marquee-right:hover { animation-play-state: paused; }
 
 /* ── 3D Perspective helpers ── */
@@ -245,17 +251,18 @@ body {
 }
 
 /* ── Aurora background effect ── */
-@keyframes aurora {
-  0% { background-position: 0% 50%, 100% 50%; }
-  50% { background-position: 100% 50%, 0% 50%; }
-  100% { background-position: 0% 50%, 100% 50%; }
+@keyframes aurora-fade {
+  0% { opacity: 0.35; }
+  50% { opacity: 0.65; }
+  100% { opacity: 0.35; }
 }
 .aurora-bg {
   background:
     radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.08) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 60%),
     radial-gradient(ellipse at 60% 80%, rgba(34,211,238,0.05) 0%, transparent 60%);
-  animation: aurora 8s ease-in-out infinite alternate;
+  animation: aurora-fade 10s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 
 /* ── Text gradient link underline ── */

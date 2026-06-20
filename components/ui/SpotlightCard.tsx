@@ -1,7 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { useRef, useCallback } from 'react';
 
 interface SpotlightCardProps {
   children: React.ReactNode;
@@ -15,35 +14,29 @@ export default function SpotlightCard({
   spotlightColor = 'rgba(99, 102, 241, 0.15)',
 }: SpotlightCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setPosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+    card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
   }, []);
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative overflow-hidden group/spotlight ${className}`}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
     >
       {/* Spotlight gradient */}
       <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-500 rounded-[inherit]"
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover/spotlight:opacity-100 transition-opacity duration-500 rounded-[inherit]"
         style={{
-          opacity: isHovering ? 1 : 0,
-          background: `radial-gradient(350px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
+          background: `radial-gradient(350px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), ${spotlightColor}, transparent 80%)`,
         }}
       />
       {children}
-    </motion.div>
+    </div>
   );
 }

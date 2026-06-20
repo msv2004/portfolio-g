@@ -1,11 +1,11 @@
 'use client';
 
-import { useRef, Suspense } from 'react';
+import { useRef, useEffect, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Stars, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-function AnimatedSphere() {
+function AnimatedSphere({ isMobile }: { isMobile: boolean }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
@@ -26,11 +26,17 @@ function AnimatedSphere() {
     }
   });
 
+  const sphereDetail = isMobile ? ([1.4, 24, 24] as const) : ([1.4, 48, 48] as const);
+  const overlayDetail = isMobile ? ([1.42, 12, 12] as const) : ([1.42, 16, 16] as const);
+  const torusDetail1 = isMobile ? ([2.2, 0.015, 8, 48] as const) : ([2.2, 0.015, 12, 128] as const);
+  const torusDetail2 = isMobile ? ([2.8, 0.01, 8, 48] as const) : ([2.8, 0.01, 12, 128] as const);
+  const particleCount = isMobile ? 8 : 20;
+
   return (
     <group>
       {/* Main animated sphere using standard Three.js materials */}
       <mesh ref={meshRef} position={[0, 0, 0]}>
-        <sphereGeometry args={[1.4, 64, 64]} />
+        <sphereGeometry args={sphereDetail} />
         <meshStandardMaterial
           color="#4f46e5"
           roughness={0.2}
@@ -42,7 +48,7 @@ function AnimatedSphere() {
 
       {/* Wireframe overlay */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[1.42, 16, 16]} />
+        <sphereGeometry args={overlayDetail} />
         <meshBasicMaterial
           color="#6366f1"
           wireframe
@@ -53,7 +59,7 @@ function AnimatedSphere() {
 
       {/* Orbit ring 1 */}
       <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
-        <torusGeometry args={[2.2, 0.015, 16, 200]} />
+        <torusGeometry args={torusDetail1} />
         <meshStandardMaterial
           color="#6366f1"
           emissive="#6366f1"
@@ -65,7 +71,7 @@ function AnimatedSphere() {
 
       {/* Orbit ring 2 */}
       <mesh ref={ringRef2} rotation={[Math.PI / 3, Math.PI / 4, 0]}>
-        <torusGeometry args={[2.8, 0.01, 16, 200]} />
+        <torusGeometry args={torusDetail2} />
         <meshStandardMaterial
           color="#22d3ee"
           emissive="#22d3ee"
@@ -76,8 +82,8 @@ function AnimatedSphere() {
       </mesh>
 
       {/* Floating particles around sphere */}
-      {Array.from({ length: 20 }).map((_, i) => {
-        const angle = (i / 20) * Math.PI * 2;
+      {Array.from({ length: particleCount }).map((_, i) => {
+        const angle = (i / particleCount) * Math.PI * 2;
         const radius = 2;
         return (
           <mesh
@@ -108,16 +114,36 @@ function AnimatedSphere() {
 }
 
 export default function RotatingSphere() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-full h-full">
+    <div ref={containerRef} className="w-full h-full">
       <Canvas
         camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
+        frameloop={inView ? 'always' : 'never'}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
       >
         <Suspense fallback={null}>
-          <Stars radius={100} depth={50} count={2000} factor={3} saturation={0} fade speed={0.5} />
-          <AnimatedSphere />
+          <Stars radius={100} depth={50} count={isMobile ? 500 : 2000} factor={3} saturation={0} fade speed={0.5} />
+          <AnimatedSphere isMobile={isMobile} />
           <OrbitControls
             enableZoom={false}
             enablePan={false}

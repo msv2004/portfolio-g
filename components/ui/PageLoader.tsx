@@ -16,7 +16,7 @@ export default function PageLoader() {
       {loading && (
         <motion.div
           key="loader"
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#050508]"
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#0A0A0A]"
           exit={{ clipPath: 'inset(0 0 100% 0)', transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] } }}
         >
           {/* Subtle grid */}

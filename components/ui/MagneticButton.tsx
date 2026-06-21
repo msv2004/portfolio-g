@@ -52,7 +52,14 @@ export default function MagneticButton({
   }, [x, y]);
 
   const motionStyle = { x: springX, y: springY };
-  const shared = { className, onMouseMove, onMouseLeave, 'aria-label': ariaLabel };
+  const shared = {
+    className,
+    onMouseMove,
+    onMouseLeave,
+    'aria-label': ariaLabel,
+    whileHover: { scale: 1.05 },
+    transition: { type: 'spring', stiffness: 350, damping: 15 }
+  };
 
   if (Tag === 'a') {
     return (

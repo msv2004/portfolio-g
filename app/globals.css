@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: 240 10% 4%;
-  --foreground: 0 0% 98%;
-  --accent: 245 85% 65%;
+  --background: 0 0% 4%;
+  --foreground: 0 0% 100%;
+  --accent: 217 91% 60%;
   --accent-foreground: 0 0% 100%;
-  --muted: 240 5% 15%;
-  --muted-foreground: 240 5% 65%;
+  --muted: 240 5% 10%;
+  --muted-foreground: 240 5% 67%;
   --border: 240 5% 12%;
+  --font-syne: var(--font-space-grotesk);
 }
 
 * {
@@ -29,7 +30,7 @@ html {
 }
 
 body {
-  background: #050508;
+  background: #0A0A0A;
   color: hsl(var(--foreground));
   font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
@@ -46,9 +47,9 @@ body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #050508; }
+::-webkit-scrollbar-track { background: #0A0A0A; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
   border-radius: 2px;
 }
 
@@ -181,9 +182,9 @@ body {
 }
 
 /* ── Section spacing ── */
-.section { padding: 6rem 0; }
-@media (max-width: 768px) { .section { padding: 3.5rem 0; } }
-@media (max-width: 480px) { .section { padding: 3rem 0; } }
+.section { padding: 120px 0; }
+@media (max-width: 768px) { .section { padding: 80px 0; } }
+@media (max-width: 480px) { .section { padding: 60px 0; } }
 
 /* ── Skill bar ── */
 @keyframes skill-fill {

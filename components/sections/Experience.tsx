@@ -93,7 +93,7 @@ export default function Experience() {
                   className="relative md:pl-20"
                 >
                   {/* Timeline dot */}
-                  <div className={`absolute left-[26px] top-7 w-4 h-4 rounded-full ${c.dot} ring-4 ring-[#050508] hidden md:block`} />
+                  <div className={`absolute left-[26px] top-7 w-4 h-4 rounded-full ${c.dot} ring-4 ring-[#0A0A0A] hidden md:block`} />
 
                   <SpotlightCard
                     className={`glass-card rounded-2xl p-5 sm:p-7 border ${c.border} transition-all duration-300 group hover:scale-[1.01]`}

@@ -209,8 +209,8 @@ export default function Skills() {
           <p className="text-xs text-white/30 uppercase tracking-widest text-center mb-6 font-mono">Technologies I work with</p>
           {/* Fade edges */}
           <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#050508] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#050508] to-transparent z-10 pointer-events-none" />
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
             <div className="space-y-3">
               <MarqueeStrip tags={techTags.slice(0, 14)} direction="left" />
               <MarqueeStrip tags={techTags.slice(7)} direction="right" />

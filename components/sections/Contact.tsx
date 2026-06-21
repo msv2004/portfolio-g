@@ -6,7 +6,7 @@ import SectionHeader from '@/components/ui/SectionHeader';
 import SpotlightCard from '@/components/ui/SpotlightCard';
 import {
   Mail, Linkedin, Github, Send, CheckCircle,
-  AlertCircle, Loader2, MapPin, Phone, ShieldCheck, MessageSquare
+  AlertCircle, Loader2, MapPin, ShieldCheck, MessageSquare
 } from 'lucide-react';
 
 const EMAILJS_SERVICE_ID  = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID  || 'service_ym8w2qc';
@@ -21,7 +21,6 @@ const socialLinks = [
   { icon: Linkedin, label: 'LinkedIn', value: 'Marri Shashe Vikaash',          href: 'https://linkedin.com/in/shashe-vikaash', color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/20',         spotlight: 'rgba(59,130,246,0.1)' },
   { icon: Github,   label: 'GitHub',   value: 'github.com/msv2004',            href: 'https://github.com/msv2004',             color: 'text-white/70',    bg: 'bg-white/5 border-white/10',                spotlight: 'rgba(255,255,255,0.04)' },
   { icon: MapPin,   label: 'Location', value: 'Chennai, Tamil Nadu, India',    href: '#',                                      color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20',   spotlight: 'rgba(16,185,129,0.08)' },
-  { icon: Phone,    label: 'Phone',    value: '+91 8309625946',                href: 'tel:+918309625946',                      color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/20',     spotlight: 'rgba(99,102,241,0.1)' },
 ];
 
 /* Simple clean input — no floating label, visible placeholder */

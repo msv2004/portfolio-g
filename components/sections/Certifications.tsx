@@ -135,8 +135,8 @@ export default function Certifications() {
           viewport={{ once: true }}
           className="relative mb-12 overflow-hidden"
         >
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#050508] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#050508] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
           <div className="flex gap-3 w-max marquee-left">
             {doubledIssuers.map((issuer, i) => (
               <span

@@ -15,7 +15,7 @@ export default function GlowBorder({
   children,
   className = '',
   borderRadius = '1rem',
-  glowColors = ['#6366f1', '#8b5cf6', '#22d3ee', '#6366f1'],
+  glowColors = ['#3b82f6', '#2563eb', '#60a5fa', '#3b82f6'],
   active = false,
 }: GlowBorderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +64,7 @@ export default function GlowBorder({
         />
         {/* Mask to show only border */}
         <div
-          className="absolute inset-[1px] bg-[#050508] rounded-[calc(1rem-1px)]"
+          className="absolute inset-[1px] bg-[#0A0A0A] rounded-[calc(1rem-1px)]"
           style={{ borderRadius: `calc(${borderRadius} - 1px)` }}
         />
       </motion.div>

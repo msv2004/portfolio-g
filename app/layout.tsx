@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono, Syne } from 'next/font/google';
+import { Inter, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -14,11 +14,11 @@ const jetbrains = JetBrains_Mono({
   display: 'swap',
 });
 
-const syne = Syne({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-syne',
+  variable: '--font-space-grotesk',
   display: 'swap',
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['300', '400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
@@ -40,14 +40,14 @@ export const metadata: Metadata = {
   authors: [{ name: 'Marri Shashe Vikaash', url: 'https://github.com/msv2004' }],
   openGraph: {
     title: 'Marri Shashe Vikaash | AI Engineer & Software Developer',
-    description: 'Premium 3D portfolio showcasing AI, ML, and software engineering projects.',
+    description: 'Premium portfolio showcasing AI, ML, and software engineering projects.',
     type: 'website',
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Marri Shashe Vikaash | AI Engineer & Software Developer',
-    description: 'Premium 3D portfolio showcasing AI, ML, and software engineering projects.',
+    description: 'Premium portfolio showcasing AI, ML, and software engineering projects.',
   },
   robots: { index: true, follow: true },
 };
@@ -58,8 +58,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrains.variable} ${syne.variable}`}>
-      <body className="bg-[#050508] text-white antialiased">
+    <html lang="en" className={`${inter.variable} ${jetbrains.variable} ${spaceGrotesk.variable}`}>
+      <body className="bg-[#0A0A0A] text-white antialiased">
         {children}
       </body>
     </html>

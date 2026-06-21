@@ -208,9 +208,22 @@ export default function Projects() {
         </motion.div>
 
         {/* Project Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <motion.div
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.08,
+              },
+            },
+          }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+        >
           <AnimatePresence mode="popLayout">
-            {filtered.map((project, i) => {
+            {filtered.map((project) => {
               const c = colorConfig[project.color];
               const Icon = project.icon;
               const isExpanded = expanded === project.id;
@@ -288,10 +301,11 @@ export default function Projects() {
                 <motion.div
                   key={project.id}
                   layout
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+                  }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4, delay: i * 0.07 }}
                   onClick={() => setExpanded(isExpanded ? null : project.id)}
                 >
                   {project.featured ? (
@@ -303,7 +317,7 @@ export default function Projects() {
               );
             })}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         {/* GitHub CTA */}
         <motion.div

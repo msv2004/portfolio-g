@@ -275,7 +275,7 @@ export default function About() {
                       className={`relative pl-14 p-5 rounded-2xl border ${colorMap[edu.color]} hover:scale-[1.015] transition-all duration-300 cursor-default`}
                       spotlightColor={edu.color === 'indigo' ? 'rgba(99,102,241,0.1)' : edu.color === 'purple' ? 'rgba(139,92,246,0.1)' : 'rgba(34,211,238,0.1)'}
                     >
-                      <div className={`absolute left-3.5 top-6 w-3 h-3 rounded-full ${dotMap[edu.color]} ring-2 ring-[#050508] z-10`} />
+                      <div className={`absolute left-3.5 top-6 w-3 h-3 rounded-full ${dotMap[edu.color]} ring-2 ring-[#0A0A0A] z-10`} />
                       <div className="flex items-start justify-between gap-2 mb-1">
                         <h4 className="text-sm font-bold text-white leading-tight" style={{ fontFamily: 'var(--font-syne, var(--font-inter))' }}>{edu.degree}</h4>
                         <span className="text-xs font-mono text-white/40 whitespace-nowrap">{edu.period}</span>

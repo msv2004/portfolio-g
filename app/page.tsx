@@ -32,7 +32,7 @@ export default function Home() {
       <CustomCursor />
       <ScrollProgress />
 
-      <main className="relative min-h-screen bg-[#050508] overflow-x-hidden">
+      <main className="relative min-h-screen bg-[#0A0A0A] overflow-x-hidden">
         {/* Fixed grid background */}
         <div className="fixed inset-0 grid-bg opacity-100 pointer-events-none" />
 
